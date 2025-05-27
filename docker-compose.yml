@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # Base de données MongoDB
+  mongodb:
+    image: mongo:6.0
+    container_name: budget-mongo-dev
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: budget-tracker-ucad
+    networks:
+      - budget-network
+
+  # Backend API Node.js
+  backend:
+    build: ./backend
+    container_name: budget-backend-dev
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongodb:27017/budget-tracker-ucad
+    depends_on:
+      - mongodb
+    networks:
+      - budget-network
+
+  # Frontend React
+  frontend:
+    build: ./frontend
+    container_name: budget-frontend-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - backend
+    networks:
+      - budget-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  budget-network:
+    driver: bridge
