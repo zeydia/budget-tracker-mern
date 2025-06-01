@@ -3,8 +3,7 @@ const mongoose = require('mongoose');
 const CategorySchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Le nom de la categorie est requis'],
-    unique: true,
+    required: [true, 'Le nom de la categorie est requis']
   },
   type: {
     type: String,
@@ -15,7 +14,7 @@ const CategorySchema = new mongoose.Schema({
   color: {
     type: String,
     required: [true,'La couleur est requise'],
-    default: '#3498 db'
+    default: '#3498db'
   },
   user: {
     type: mongoose.Schema.ObjectId,

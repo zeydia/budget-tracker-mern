@@ -16,6 +16,7 @@ import PublicNavbar from './components/layout/PublicNavbar';
 import Sidebar from './components/layout/Sidebar';
 import CategoryPage from './pages/CategoryPage';
 import TransactionPage from './pages/TransactionPage';
+import Home from './pages/Home';
 
 //Theme Material-UI personnalise
 const theme = createTheme({
@@ -34,11 +35,8 @@ const theme = createTheme({
 //Composant pour proteger les routes privees
 const PrivateRoute = ({ children }) => {
   const { isAuthenticated, loading, load } = useAuth();
- 
- //   load(localStorage.getItem('token'));
- 
 
-  return isAuthenticated ? <><Sidebar />{children}</> : <Navigate to="/login" />;
+  return isAuthenticated ? <><Sidebar />{children}</> : <Navigate to="/" />;
 };
 //Composant pour rediriger si deja connecte
 const PublicRoute = ({ children }) => {
@@ -57,6 +55,7 @@ function AppContent() {
       <Box sx={{ display: 'flex' }}>
       <Routes>
         {/* Routes publiques */}
+        <Route path="/home" element={<PublicRoute><Home /></PublicRoute>}/>
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>}/>
         <Route path="/register" element={<PublicRoute><Register /></PublicRoute>}/>
         {/* Routes privees */}
@@ -64,7 +63,8 @@ function AppContent() {
         <Route path="/categories" element={<PrivateRoute><CategoryPage /></PrivateRoute>}/>
         <Route path="/transactions" element={<PrivateRoute><TransactionPage /></PrivateRoute>}/>
         {/* Redirection par defaut */}
-        <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />}/>
+
+        <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/home"} />}/>
         <Route path="*" element={<Navigate to={"/"} />}/>
       </Routes>
       </Box>

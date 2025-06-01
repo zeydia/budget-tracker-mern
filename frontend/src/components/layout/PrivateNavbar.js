@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Box, Link } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
 
 const PrivateNavbar = () => {
@@ -11,9 +11,11 @@ const PrivateNavbar = () => {
   return (
     <AppBar position="fixed" color="primary">
       <Toolbar>
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+        <Link href="/" sx={{ flexGrow: 1 }} color="inherit">
+        <Typography variant="h6" >
           Budget Tracker IPSL
         </Typography>
+        </Link>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Typography variant="body2">
               Bonjour , {user.name}

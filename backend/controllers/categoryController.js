@@ -18,8 +18,10 @@ const createCategory = async (req, res) => {
     const { name, type, color } = req.body;
 
     const categoryDB = await Category.findOne({ name: name, user: req.user._id });
+    console.log(categoryDB);
 
     if (!categoryDB) {
+      
 
       const category = await Category.create({
         name: name, type: type, color: color, user: req.user._id
