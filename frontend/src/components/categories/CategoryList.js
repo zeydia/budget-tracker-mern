@@ -31,10 +31,10 @@ const CategoryList = () => {
         }
     };
     const handleDelete = async (id) => {
-        if (window.confirm('Supprimer cette categorie ?')) {
+        if (window.confirm('Toutes les transactions lies a cette categories seront suprimees.\nVoulez vous supprimer cette categorie ?')) {
             try {
-                await axiosClient.delete('/api/categories/${id}');
-                setCategories(categories.filter(cat => cat._id !== id));
+                await axiosClient.delete(`/api/categories/${id}`);
+                location.reload();
             } catch (error) {
                 console.error('Erreur lors de la suppression :', error);
             }
@@ -71,6 +71,7 @@ const CategoryList = () => {
                                     </IconButton>
                                     <IconButton
                                         size="small"
+                                        color="error"
                                         onClick={() => handleDelete(category._id)}
                                     >
                                         <Delete />

@@ -26,14 +26,14 @@ const columns = [
         id: 'category',
         label: 'Catégorie',
         minWidth: 150,
-        format: (value) => value.toLocaleString('en-US'),
+        format: (value,type) => value.toLocaleString('en-US'),
     },
     {
         id: 'amount',
         label: 'Montant(FCFA)',
         minWidth: 100,
         align: 'right',
-        format: (value) => value == 'expense' ? `- ${value}` : `+ ${value}`,
+        format: (value,type) => type == 'expense' ? `- ${value}` : `+ ${value}`,
         color: ' ',
     },
     {
@@ -41,7 +41,7 @@ const columns = [
         label: 'Date',
         minWidth: 170,
         align: 'right',
-        format: (value) => new Date(value).toDateString()
+        format: (value,type) => new Date(value).toDateString()
     },
     {
         id: 'action',
@@ -96,6 +96,17 @@ const TransactionList = () => {
         setPage(0);
     };
 
+    const handleDelete = async (id) => {
+        if (window.confirm('Supprimer cette transaction ?')) {
+            try {
+                await axiosClient.delete(`/api/transactions/${id}`);
+                location.reload();
+            } catch (error) {
+                console.error('Erreur lors de la suppression :', error);
+            }
+        }
+    };
+
     if (loading) return <Loading />
 
     return (
@@ -143,7 +154,7 @@ const TransactionList = () => {
                                             return (
                                                 <TableCell key={column.id} align='center' sx={{ color: column.color }}>
                                                     {column.format
-                                                        ? column.format(value)
+                                                        ? column.format(value,type)
                                                         : value}
                                                 </TableCell>
                                             );

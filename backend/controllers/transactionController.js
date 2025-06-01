@@ -49,7 +49,7 @@ const deleteTransaction = async (req, res) => {
     if (!transaction) {
       return res.status(404).json({ success: false, message:'Transaction non trouvee'});
     }
-    res.json({ success: true, message:'Transaction supprimee'});
+    return res.json({ success: true, message:'Transaction supprimee'});
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

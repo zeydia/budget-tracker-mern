@@ -54,6 +54,7 @@ const TransactionForm = ({ open, onClose }) => {
                 date: new Date()
             });
             setSuccess(response.data.message);
+            location.reload();
         } catch (error) {
             setError('Une categorie du meme nom existe deja.');
             console.error('Erreur creation transaction :', error);

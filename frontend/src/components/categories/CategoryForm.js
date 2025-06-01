@@ -34,6 +34,7 @@ const CategoryForm = ({ open, onClose }) => {
                 type: 'expense'
             });
             setSuccess(response.data.message);
+            location.reload();
             
         } catch (error) {
             setError('Une categorie du meme nom existe deja.');
