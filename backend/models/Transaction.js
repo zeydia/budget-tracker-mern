@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const {CategorySchema} = require('../models/Category');
 
 const TransactionSchema = new mongoose.Schema({
   description: {

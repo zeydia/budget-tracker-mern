@@ -7,6 +7,7 @@ import {
     CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
 import axiosClient from '../../utils/axiosClient';
+import Loading from '../../utils/Loading';
 
 const Dashboard = () => {
     const [transactions, setTransactions] = useState([]);
@@ -52,14 +53,14 @@ const Dashboard = () => {
 
     //Formater montants en FCFA
     const formatAmount = (amount) => {
-        return new Intl.NumberFormat('fr -FR', {
+        return new Intl.NumberFormat('fr-FR', {
             style: 'currency',
             currency: 'XOF',
             minimumFractionDigits: 0
         }).format(amount);
     };
 
-    if (loading) return < Typography> Chargement ... </Typography>;
+    if (loading) return <Loading />
     return (
         < Container maxWidth="lg">
             < Typography variant="h4" gutterBottom>

@@ -19,11 +19,15 @@ router.post('/register', async (req, res) => {
         }
         const user = await new User({ name, email, password });
         user.save();
+
+        const token = generateToken(user._id)
         
 
         res.status(201).json({
             message: 'Utilisateur cree',
+            token: token,
             user: {
+                id: user._id,
                 name: user.name,
                 email: user.email,
                 createdAt: user.createdAt,
@@ -63,6 +67,7 @@ router.post('/login', async (req, res) => {
             message: 'Login reussi',
             token: token,
             user: {
+                id: user._id,
                 name: user.name,
                 email: user.email,
                 createdAt: user.createdAt,

@@ -6,7 +6,6 @@ const categoriesRoutes = require('./routes/categories');
 const transactionsRoutes = require('./routes/transactions');
 const statsRoutes = require('./routes/stats');
 const usersRoutes = require('./routes/usersRoutes');
-const { userByToken } = require('./middleware/auth');
 
 const app = express();
 
@@ -29,9 +28,6 @@ app.get('/api/health' , (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
-
-// // Exemple de route protégée
-app.post('/api/userByToken', userByToken);
 
 // Route Utilisateurs
 app.use('/api/users', usersRoutes);

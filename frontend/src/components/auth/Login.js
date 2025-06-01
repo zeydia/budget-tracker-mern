@@ -5,25 +5,6 @@ import {
 } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
 
-// TODO-FORM-1: Formulaire de connexion
-//
-// OBJECTIF: Créer l'interface de connexion utilisateur
-//
-// QUE FAIT CE CODE: Formulaire Material-UI avec validation et gestion d'erreurs.
-//
-// INSTRUCTIONS: Consultez la section "TODO-FORM-1" du lab PDF
-//
-// ÉTAPES À COMPLÉTER:
-// 1. Importer useAuth depuis AuthContext
-// 2. Gérer l'état du formulaire avec useState
-// 3. Implémenter handleChange pour les champs
-// 4. Implémenter handleSubmit avec validation
-// 5. Utiliser login() depuis useAuth
-// 6. Gérer loading et erreurs
-//
-// RAPPEL: Le code complet est dans le lab PDF à la section TODO-FORM-1
-
-
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -34,10 +15,6 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
-
-
-  console.log(loading);
-  
 
 
   const handleChange = (e) => {

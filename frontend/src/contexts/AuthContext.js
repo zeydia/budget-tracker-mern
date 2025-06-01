@@ -1,25 +1,9 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-// import axiosClient from '../utils/axiosClient';
-
-// TODO-CONTEXT-1: Configuration authentification
-//
-// OBJECTIF: Créer le contexte global pour l'authentification
-//
-// QUE FAIT CE CODE: Gère l'état de connexion dans toute l'application.
-//
-// INSTRUCTIONS: Consultez la section "TODO-CONTEXT-1" du lab PDF
-//
-// ÉTAPES À COMPLÉTER:
-// 1. Définir AUTH_ACTIONS (LOGIN_SUCCESS, LOGOUT, LOAD_USER)
-// 2. Créer initialState avec user, token, isAuthenticated, loading
-// 3. Implémenter authReducer avec switch case
-// 4. Créer AuthProvider avec useReducer
-// 5. Implémenter login function avec axiosClient
-// 6. Créer useAuth hook personnalisé
-//
-// RAPPEL: Le code complet est dans le lab PDF à la section TODO-CONTEXT-1
-
 import axiosClient from '../utils/axiosClient';
+import { Message } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+//import {jwtDecode} from 'jwt-decode';
+
 
 // Actions pour le reducer
 const AUTH_ACTIONS = {
@@ -29,12 +13,20 @@ const AUTH_ACTIONS = {
 };
 
 // Etat initial
-const initialState = {
-  user: null,
-  token: localStorage.getItem('token'),
+let initialState = {
+  user: JSON.parse(localStorage.getItem('user')),
+  token: '',
   isAuthenticated: false,
+  message: '',
   loading: true
 };
+
+if (localStorage.getItem('token')){
+  initialState = {
+    ...initialState,
+    isAuthenticated: true
+  }
+}
 
 // Reducer pour gerer les changements d' etat
 const authReducer = (state, action) => {
@@ -45,15 +37,27 @@ const authReducer = (state, action) => {
         user: action.payload.user,
         token: action.payload.token,
         isAuthenticated: true,
+        message: 'Connecté',
         loading: false
       };
     case AUTH_ACTIONS.LOGOUT:
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
       return {
         ...state,
         user: null,
         token: null,
         isAuthenticated: false,
+        message: 'Deconnexion',
+        loading: false
+      };
+    case AUTH_ACTIONS.LOAD_USER:
+      return {
+        ...state,
+        user: action.payload.user,
+        token: localStorage.getItem('token'),
+        isAuthenticated: true,
+        message: 'Refresh',
         loading: false
       };
     default:
@@ -66,23 +70,50 @@ const AuthContext = createContext();
 // Provider component
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
+
   // Fonction de connexion
   const login = async (email, password) => {
     try {
       const res = await axiosClient.post('/api/auth/login', { email, password });
+      console.log(res.data)
       // Stocker le token
-      localStorage.setItem('token', res.data.data.token);
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
       // Configurer axios
-      axiosClient.defaults.headers.common['Authorization'] = `Bearer ${ res.data.data.token }`;
+      axiosClient.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
       // Mettre a jour l'etat
-      dispatch({ type: AUTH_ACTIONS.LOGIN_SUCCESS, payload: res.data.data });
+      dispatch({ type: AUTH_ACTIONS.LOGIN_SUCCESS, payload: res.data });
+
     } catch (error) {
       console.error('Erreur de connexion :', error);
+      throw new Error("Erreur de connexion");
     }
   };
-  
+
+  const logout = () => {
+    dispatch({ type: AUTH_ACTIONS.LOGOUT });
+  }
+
+  const register = async (name, email, password) => {
+    try {
+      const res = await axiosClient.post('/api/auth/register', { name, email, password });
+      // Stocker le token
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
+      // Configurer axios
+      axiosClient.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
+      // Mettre a jour l'etat
+      dispatch({ type: AUTH_ACTIONS.LOGIN_SUCCESS, payload: res.data });
+
+    } catch (error) {
+      throw new Error("Erreur de la creation de compte");
+    }
+  };
+
+  console.log(state);
+
   return (
-    <AuthContext.Provider value={{ ...state, login, logout: () => dispatch({ type: AUTH_ACTIONS.LOGOUT }) }}>
+    <AuthContext.Provider value={{ ...state, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );

@@ -8,21 +8,22 @@ import { fr } from 'date-fns/locale';
 //Contexts
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 //Components
-import Navbar from './components/Navbar';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Dashboard from './components/dashboard/Dashboard';
 import CategoryList from './components/categories/CategoryList';
 import TransactionList from './components/transactions/TransactionList';
+import PrivateNavbar from './components/layout/PrivateNavbar';
+import PublicNavbar from './components/layout/PublicNavbar';
 
 //Theme Material-UI personnalise
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976 d2',
+      main: '#1976d2',
     },
     secondary: {
-      main: '# dc004e',
+      main: '#dc004e',
     },
   },
   typography: {
@@ -32,24 +33,24 @@ const theme = createTheme({
 //Composant pour proteger les routes privees
 const PrivateRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
-  if (loading) {
-    return <div> Chargement ... </div>;
-  }
+  // if (loading) {
+  //   return <div> Chargement ... </div>;
+  // }
   return isAuthenticated ? children : <Navigate to="/login" />;
 };
 //Composant pour rediriger si deja connecte
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
-  if (loading) {
-    return <div> Chargement ... </div>;
-  }
+  // if (loading) {
+  //   return <div> Chargement ... </div>;
+  // }
   return isAuthenticated ? <Navigate to="/dashboard" /> : children;
 };
 function AppContent() {
   const { isAuthenticated } = useAuth();
   return (
     <div className="App">
-      {isAuthenticated && <Navbar />}
+      {isAuthenticated ? <PrivateNavbar /> : <PublicNavbar />}
       <Routes>
         {/* Routes publiques */}
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>}/>
