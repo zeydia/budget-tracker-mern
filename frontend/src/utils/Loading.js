@@ -5,9 +5,10 @@ import React from 'react'
 const Loading = () => {
 
     const DisabledBackground = styled(Box)({
-        width: "100%",
-        height: "110%",
+        width: "5000px",
+        height: "5000px",
         position: "fixed",
+        transform: "translate(-20%,-20%)",
         background: "#ccc",
         opacity: 0.5,
         zIndex: 1

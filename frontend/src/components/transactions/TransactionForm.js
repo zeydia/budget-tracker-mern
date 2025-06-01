@@ -4,9 +4,12 @@ import {
     TextField, Button, FormControl, InputLabel, Select, MenuItem,
     Switch, FormControlLabel, Box
 } from '@mui/material';
-import { DatePicker } from '@mui /x-date-pickers/DatePicker';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import axiosClient from '../../utils/axiosClient';
-const TransactionForm = ({ open, onClose, onSubmit }) => {
+
+const TransactionForm = ({ open, onClose }) => {
+    const [error, setError] = useState();
+    const [success, setSuccess] = useState();
     const [formData, setFormData] = useState({
         description: '',
         amount: '',
@@ -14,6 +17,7 @@ const TransactionForm = ({ open, onClose, onSubmit }) => {
         type: 'expense',
         date: new Date()
     });
+
     const [categories, setCategories] = useState([]);
     useEffect(() => {
         if (open) {
@@ -33,13 +37,14 @@ const TransactionForm = ({ open, onClose, onSubmit }) => {
             ...formData,
             [e.target.name]: e.target.value
         });
+        setError('');
+        setSuccess('');
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const response = await axiosClient.post('/api/transactions', formData);
-            onSubmit(response.data.data); //Notifier le parent
-            onClose(); //Fermer le dialog
+
             //Reset du formulaire
             setFormData({
                 description: '',
@@ -48,17 +53,26 @@ const TransactionForm = ({ open, onClose, onSubmit }) => {
                 type: 'expense',
                 date: new Date()
             });
+            setSuccess(response.data.message);
         } catch (error) {
+            setError('Une categorie du meme nom existe deja.');
             console.error('Erreur creation transaction :', error);
         }
     };
+
+        const handleMessage = () => {
+            if (error) return <Alert severity="error" >{error} </Alert>;
+            if (success) return <Alert severity="success">{success} </Alert>;
+        };
+
     //Filtrer les categories par type
     const filteredCategories = categories.filter(cat => cat.type === formData.type);
     return (
-        < Dialog open={open} onClose={onClose} maxWidth=" sm " fullWidth>
-            < form onSubmit={handleSubmit}>
-                < DialogTitle> Nouvelle Transaction </DialogTitle>
-                < DialogContent>
+        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+            <form onSubmit={handleSubmit}>
+                <DialogTitle> Nouvelle Transaction </DialogTitle>
+                {handleMessage}
+                <DialogContent>
                     < Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
                         {/* Type de transaction */}
                         < FormControlLabel
@@ -78,19 +92,19 @@ const TransactionForm = ({ open, onClose, onSubmit }) => {
                         {/* Description */}
                         < TextField
                             fullWidth
-                            label=" Description "
-                            name=" description "
+                            label="Description"
+                            name="description"
                             value={formData.description}
                             onChange={handleChange}
-                            placeholder=" Ex : Car rapide UCAD -> Plateau "
+                            placeholder="Ex: Car rapide UCAD -> Plateau"
                             required
                         />
                         {/* Montant */}
                         < TextField
                             fullWidth
-                            label=" Montant ( FCFA )"
-                            name=" amount "
-                            type=" number "
+                            label="Montant( FCFA )"
+                            name="amount"
+                            type="number"
                             value={formData.amount}
                             onChange={handleChange}
                             required
@@ -100,10 +114,10 @@ const TransactionForm = ({ open, onClose, onSubmit }) => {
                         < FormControl fullWidth required>
                             < InputLabel> Categorie </InputLabel>
                             < Select
-                                name=" category "
+                                name="category"
                                 value={formData.category}
                                 onChange={handleChange}
-                                label=" Categorie "
+                                label="Categorie"
                             >
                                 {filteredCategories.map((category) => (
                                     < MenuItem key={category._id} value={category._id}>
@@ -124,7 +138,7 @@ const TransactionForm = ({ open, onClose, onSubmit }) => {
                         </FormControl>
                         {/* Date */}
                         < DatePicker
-                            label=" Date "
+                            label="Date"
                             value={formData.date}
                             onChange={(newDate) => setFormData({ ...formData, date: newDate })}
                             renderInput={(params) => < TextField {...params} fullWidth />}
@@ -134,7 +148,7 @@ const TransactionForm = ({ open, onClose, onSubmit }) => {
                 </DialogContent>
                 < DialogActions>
                     < Button onClick={onClose}> Annuler </Button>
-                    < Button type=" submit " variant=" contained ">
+                    < Button type="submit" variant="contained">
                         Creer
                     </Button>
                 </DialogActions>

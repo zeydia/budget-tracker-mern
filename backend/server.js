@@ -6,6 +6,7 @@ const categoriesRoutes = require('./routes/categories');
 const transactionsRoutes = require('./routes/transactions');
 const statsRoutes = require('./routes/stats');
 const usersRoutes = require('./routes/usersRoutes');
+const { userByToken } = require('./middleware/auth');
 
 const app = express();
 
@@ -31,6 +32,9 @@ app.get('/api/health' , (req, res) => {
 
 // Route Utilisateurs
 app.use('/api/users', usersRoutes);
+
+// Route Chargement de l'utilisateur
+app.use('/api/userByToken', userByToken);
 
 // Route Categories
 app.use('/api/categories', categoriesRoutes);

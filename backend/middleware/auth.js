@@ -5,6 +5,7 @@ const protect = async (req, res, next) => {
   let token;
   // Extraire le token du header Authorization
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    
     try {
       token = req.headers.authorization.split(' ')[1];
       
@@ -27,5 +28,24 @@ const protect = async (req, res, next) => {
   }
 };
 
-module.exports = { protect };
+const userByToken = async (req, res) => {
+  let token;
+    try {
+      token = req.body.token;
+      
+      // Decoder le token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      // Recuperer l ’ utilisateur 
+      const user = await User.findById(decoded.id).select('-password');
+      
+      return res.status(200).json({ message: 'Token correspondant', user: user});
+ 
+    } catch (error) {
+      console.log(error);
+      return res.status(401).json({ message: 'Token invalide' });
+    }
+
+};
+
+module.exports = { protect, userByToken };
 

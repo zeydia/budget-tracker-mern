@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { CssBaseline } from '@mui/material';
+import { Box, CssBaseline } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { fr } from 'date-fns/locale';
@@ -11,10 +11,11 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Dashboard from './components/dashboard/Dashboard';
-import CategoryList from './components/categories/CategoryList';
-import TransactionList from './components/transactions/TransactionList';
 import PrivateNavbar from './components/layout/PrivateNavbar';
 import PublicNavbar from './components/layout/PublicNavbar';
+import Sidebar from './components/layout/Sidebar';
+import CategoryPage from './pages/CategoryPage';
+import TransactionPage from './pages/TransactionPage';
 
 //Theme Material-UI personnalise
 const theme = createTheme({
@@ -32,37 +33,41 @@ const theme = createTheme({
 });
 //Composant pour proteger les routes privees
 const PrivateRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
-  // if (loading) {
-  //   return <div> Chargement ... </div>;
-  // }
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  const { isAuthenticated, loading, load } = useAuth();
+ 
+ //   load(localStorage.getItem('token'));
+ 
+
+  return isAuthenticated ? <><Sidebar />{children}</> : <Navigate to="/login" />;
 };
 //Composant pour rediriger si deja connecte
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
-  // if (loading) {
-  //   return <div> Chargement ... </div>;
-  // }
+
   return isAuthenticated ? <Navigate to="/dashboard" /> : children;
 };
 function AppContent() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, load } = useAuth();
+  
   return (
     <div className="App">
+      
       {isAuthenticated ? <PrivateNavbar /> : <PublicNavbar />}
+
+      <Box sx={{ display: 'flex' }}>
       <Routes>
         {/* Routes publiques */}
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>}/>
         <Route path="/register" element={<PublicRoute><Register /></PublicRoute>}/>
         {/* Routes privees */}
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>}/>
-        <Route path="/categories" element={<PrivateRoute><CategoryList /></PrivateRoute>}/>
-        <Route path="/transactions" element={<PrivateRoute><TransactionList /></PrivateRoute>}/>
+        <Route path="/categories" element={<PrivateRoute><CategoryPage /></PrivateRoute>}/>
+        <Route path="/transactions" element={<PrivateRoute><TransactionPage /></PrivateRoute>}/>
         {/* Redirection par defaut */}
         <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />}/>
         <Route path="*" element={<Navigate to={"/"} />}/>
       </Routes>
+      </Box>
     </div>
   );
 }

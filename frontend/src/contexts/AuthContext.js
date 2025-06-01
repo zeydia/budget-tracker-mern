@@ -15,7 +15,7 @@ const AUTH_ACTIONS = {
 // Etat initial
 let initialState = {
   user: JSON.parse(localStorage.getItem('user')),
-  token: '',
+  token: JSON.parse(localStorage.getItem('user')),
   isAuthenticated: false,
   message: '',
   loading: true
@@ -34,7 +34,7 @@ const authReducer = (state, action) => {
     case AUTH_ACTIONS.LOGIN_SUCCESS:
       return {
         ...state,
-        user: action.payload.user,
+        user: JSON.parse(localStorage.getItem('user')),
         token: action.payload.token,
         isAuthenticated: true,
         message: 'Connecté',
@@ -54,8 +54,6 @@ const authReducer = (state, action) => {
     case AUTH_ACTIONS.LOAD_USER:
       return {
         ...state,
-        user: action.payload.user,
-        token: localStorage.getItem('token'),
         isAuthenticated: true,
         message: 'Refresh',
         loading: false
@@ -90,6 +88,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+    const load = async (token) => {
+
+      // Configurer axios
+      axiosClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      // Mettre a jour l'etat
+      dispatch({ type: AUTH_ACTIONS.LOAD_USER });
+   
+  };
+
   const logout = () => {
     dispatch({ type: AUTH_ACTIONS.LOGOUT });
   }
@@ -113,7 +120,7 @@ export const AuthProvider = ({ children }) => {
   console.log(state);
 
   return (
-    <AuthContext.Provider value={{ ...state, login, logout, register }}>
+    <AuthContext.Provider value={{ ...state, login, load, logout, register }}>
       {children}
     </AuthContext.Provider>
   );

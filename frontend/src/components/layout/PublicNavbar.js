@@ -9,7 +9,7 @@ const PublicNavbar = () => {
   };
 
   return (
-    <AppBar position="static" color="primary">
+    <AppBar position="fixed" color="primary">
       <Toolbar>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           Budget Tracker IPSL
