@@ -4,12 +4,12 @@ const CategorySchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Le nom de la categorie est requis'],
-    trim: true
+    unique: true,
   },
   type: {
     type: String,
     required: [true, 'Le type est requis'],
-    enum: [ 'income', 'expense'],
+    enum: ['income', 'expense'],
     default: 'expense'
   },
   color: {
@@ -24,4 +24,6 @@ const CategorySchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Category', CategorySchema );
+const Category = mongoose.model('Category', CategorySchema );
+
+module.exports = { Category, CategorySchema };

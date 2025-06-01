@@ -1,6 +1,6 @@
 const Transaction = require('../models/Transaction');
 
-//GET /api /stats /categories - Statistiques par categorie
+//GET /api/stats/categories - Statistiques par categorie
 const getCategoryStats = async (req, res) => {
   try {
     const stats = await Transaction.aggregate([

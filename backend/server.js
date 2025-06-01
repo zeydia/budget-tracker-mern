@@ -5,7 +5,8 @@ const authRoutes = require('./routes/auth');
 const categoriesRoutes = require('./routes/categories');
 const transactionsRoutes = require('./routes/transactions');
 const statsRoutes = require('./routes/stats');
-const protect = require('./middleware/auth');
+const usersRoutes = require('./routes/usersRoutes');
+const { userByToken } = require('./middleware/auth');
 
 const app = express();
 
@@ -29,10 +30,11 @@ app.get('/api/health' , (req, res) => {
   });
 });
 
-// Exemple de route protégée
-// app.get('/api/protected', protect, (req, res) => {
-//   res.json({ msg: 'Accès autorisé', userId: req.user.id });
-// });
+// // Exemple de route protégée
+app.post('/api/userByToken', userByToken);
+
+// Route Utilisateurs
+app.use('/api/users', usersRoutes);
 
 // Route Categories
 app.use('/api/categories', categoriesRoutes);

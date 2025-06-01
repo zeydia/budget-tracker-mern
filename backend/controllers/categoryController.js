@@ -1,9 +1,11 @@
-const Category = require('../models/Category');
+const { Category } = require('../models/Category');
+const Transaction = require('../models/Transaction');
 
 // GET /api/categories - Lister toutes les categories
 const getCategories = async (req, res) => {
   try {
     const categories = await Category.find({ user: req.user._id });
+    
     res.json({ success: true, data: categories });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -14,10 +16,20 @@ const getCategories = async (req, res) => {
 const createCategory = async (req, res) => {
   try {
     const { name, type, color } = req.body;
+
+    const categoryDB = await Category.find({ name: name, user: req.user._id });
+
+    if (categoryDB!=[]) {
+      return res.status(400).json({
+        message: 'Cette catégorie existe deja!',
+        timestamp: new Date().toISOString()
+      });
+    };
+
     const category = await Category.create({
       name, type, color, user: req.user._id
     });
-    res.status(201).json({ success: true, data: category });
+    res.status(201).json({ success: true, message: 'Categorie cree avec succes', data: category });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
@@ -32,7 +44,7 @@ const updateCategory = async (req, res) => {
       { new: true, runValidators: true }
     );
     if (!category) {
-      return res.status(404).json({ success: false, message:'Categorie non trouvee'});
+      return res.status(404).json({ success: false, message: 'Categorie non trouvee' });
     }
     res.json({ success: true, data: category });
   } catch (error) {
@@ -43,13 +55,20 @@ const updateCategory = async (req, res) => {
 // DELETE /api/categories/:id - Supprimer une categorie
 const deleteCategory = async (req, res) => {
   try {
+    const transactionCategorie = await Transaction.find({ category: req.category._id, name: req.category._id });
+
+    if(transactionCategorie != []){
+      return res.status(400).json({ success: false, message: 'Des transactions sont lies avec cette categorie' });
+    }
+
     const category = await Category.findOneAndDelete({
       _id: req.params.id, user: req.user._id
     });
+    
     if (!category) {
-      return res.status(404).json({ success: false, message:'Categorie non trouvee'});
+      return res.status(404).json({ success: false, message: 'Categorie non trouvee' });
     }
-    res.json({ success: true, message:'Categorie supprimee'});
+    res.json({ success: true, message: 'Categorie supprimee' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

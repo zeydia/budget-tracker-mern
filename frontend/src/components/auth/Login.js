@@ -34,6 +34,12 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+
+
+  console.log(loading);
+  
+
+
   const handleChange = (e) => {
     setFormData({
       ...formData,

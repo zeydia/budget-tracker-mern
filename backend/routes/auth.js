@@ -7,10 +7,11 @@ require('dotenv').config();
 // Inscription
 router.post('/register', async (req, res) => {
     const { name, email, password } = req.body;
-    console.log('register...');
+
     try {
-        const Userdb = await User.findOne({ email: email });
-        if (Userdb) {
+        const userDB = await User.findOne({ email: email });
+
+        if (userDB) {
             return res.status(400).json({
                 message: 'Cet utilisateur existe deja!',
                 timestamp: new Date().toISOString()
@@ -18,8 +19,16 @@ router.post('/register', async (req, res) => {
         }
         const user = await new User({ name, email, password });
         user.save();
+        
+
         res.status(201).json({
             message: 'Utilisateur cree',
+            user: {
+                name: user.name,
+                email: user.email,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt
+            },
             timestamp: new Date().toISOString()
         });
     }
@@ -49,9 +58,16 @@ router.post('/login', async (req, res) => {
         }
 
         const token = generateToken(user._id);
+
         res.json({
             message: 'Login reussi',
-            token: token
+            token: token,
+            user: {
+                name: user.name,
+                email: user.email,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt
+            }
         })
     }
     catch (e) {
@@ -59,51 +75,4 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Trouve tous les utilisateurs
-router.get('/users', async (req, res) => {
-
-    try {
-        const users = await User.find({});
-        res.json(users);
-    } catch (error) {
-
-        console.log(error.message);
-    }
-
-});
-
-// Trouve un utilisateurs par son email
-router.get('/user', async (req, res) => {
-    const { email } = req.body;
-
-    try {
-        const user = await User.findOne({ email: email });
-        res.json(user);
-    } catch (error) {
-
-        console.log(error.message);
-    }
-
-});
-
-// Trouve un utilisateur par son id
-router.get('/user/:id', async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        const user = await User.findOne({ id: id });
-        res.json(user);
-    } catch (error) {
-
-        console.log(error.message);
-    }
-
-});
-
 module.exports = router;
-
-
-
-
-
-

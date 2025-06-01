@@ -10,10 +10,11 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 //Components
 import Navbar from './components/Navbar';
 import Login from './components/auth/Login';
-// import Register from './components/auth/Register';
+import Register from './components/auth/Register';
 import Dashboard from './components/dashboard/Dashboard';
-// import CategoryList from './components/categories/CategoryList';
-// import TransactionList from './components/transactions/TransactionList';
+import CategoryList from './components/categories/CategoryList';
+import TransactionList from './components/transactions/TransactionList';
+
 //Theme Material-UI personnalise
 const theme = createTheme({
   palette: {
@@ -51,54 +52,15 @@ function AppContent() {
       {isAuthenticated && <Navbar />}
       <Routes>
         {/* Routes publiques */}
-        <Route
-          path="/login"
-          element={
-            <PublicRoute>
-              <Login />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <PublicRoute>
-              <Register />
-            </PublicRoute>
-          }
-        />
+        <Route path="/login" element={<PublicRoute><Login /></PublicRoute>}/>
+        <Route path="/register" element={<PublicRoute><Register /></PublicRoute>}/>
         {/* Routes privees */}
-        <Route
-          path="/dashboard"
-          element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/categories"
-          element={
-            <PrivateRoute>
-              <CategoryList />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/transactions"
-          element={
-            <PrivateRoute>
-              <TransactionList />
-            </PrivateRoute>
-          }
-        />
+        <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>}/>
+        <Route path="/categories" element={<PrivateRoute><CategoryList /></PrivateRoute>}/>
+        <Route path="/transactions" element={<PrivateRoute><TransactionList /></PrivateRoute>}/>
         {/* Redirection par defaut */}
-        <Route
-          path="/"
-          element={
-            <Navigate to={isAuthenticated ? "/dashboard" : "/login"} />
-          }
-        />
+        <Route path="/" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />}/>
+        <Route path="*" element={<Navigate to={"/"} />}/>
       </Routes>
     </div>
   );

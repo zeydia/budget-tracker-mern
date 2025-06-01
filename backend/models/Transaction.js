@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const {CategorySchema} = require('../models/Category');
 
 const TransactionSchema = new mongoose.Schema({
   description: {
@@ -18,7 +19,7 @@ const TransactionSchema = new mongoose.Schema({
   },
   category: {
     type: mongoose.Schema.ObjectId,
-    ref:' Category',
+    ref:'Category',
     required: [true,'La categorie est requise']
   },
   user: {
@@ -31,4 +32,5 @@ const TransactionSchema = new mongoose.Schema({
     default: Date.now
   }
 }, { timestamps: true });
+
 module.exports = mongoose.model('Transaction', TransactionSchema);
